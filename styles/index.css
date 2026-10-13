@@ -1,0 +1,30 @@
+@import "style.css";
+
+#user_inf_content {
+    margin: 0 5px 0 5px;
+}
+
+#user_inf_name_block {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    gap: 5px;
+}
+
+#user_inf_btn_block button{
+    color: black;
+    background-color: cyan;
+    font-size: 20px;
+    border-radius: 5px;
+}
+
+#user_inf_btn_block button:hover {
+    cursor: pointer;
+}
+
+#user_inf_err {
+    color: red;
+    height: 20px;
+    margin: 5px 0 5px 0;
+}
+

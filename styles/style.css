@@ -1,0 +1,100 @@
+body {
+    max-width: 1200px;
+    min-width: 300px;
+    margin: auto;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    background-color: silver;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    gap: 15px;
+    align-items: baseline;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+footer {
+    background-color: silver;
+    border-radius: 0 0 15px 15px;
+    display: flex;
+    margin-top: 10px;
+    gap: 15x;
+    justify-content: center;
+}
+
+header img {
+    width: 128px;
+}
+
+#links {
+    display: flex;
+    gap: 20px;
+}
+
+#links a {
+    font-size: 20px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#btn_logout {
+    text-align: right;
+}
+
+#btn_logout input {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+#btn_logout input:hover{
+    cursor: pointer;
+}
+
+
+#content {
+    /*background-color: olive;*/
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 60px;
+    font-size: 16px;
+    background-color: skyblue;
+    border-radius: 15px;
+    padding-bottom:10px;
+    padding-top:10px;
+}
+
+#content h1 {
+    margin: 5px 0 5px 0;
+}
+
+form input{
+    height: 30px;
+    font-size: 18px;
+}
+
+form select {
+    width: 120px;
+    height: 30px;
+    font-size: 18px;
+}
+
+form label {
+    font-weight: bold;
+}
+
+#chart_block {
+    width:50%;
+}
+
+
+@media(max-width: 800px) {
+    header {
+        flex-direction: column;
+        gap: 5px;
+    }
+    nav {
+        flex-direction:column;
+    }
+}

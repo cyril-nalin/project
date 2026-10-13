@@ -1,0 +1,88 @@
+@import 'style.css';
+
+#tasks_progress_block {
+    margin-left:10px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#tasks_progress {
+    display: flex;
+}
+
+#progress_back {
+    background-color: black;
+    width: 100%;
+    margin-left: 5px;
+}
+#cur_progress {
+    width:1px;
+    height: 100%;
+    margin: 0;
+    background-color: gold;
+
+}
+
+.todo_block {
+    border: 1px dashed black;
+    margin: 10px;
+    background-color: aqua;
+    padding-bottom: 10px;
+}
+
+.todo_content_block, .todo_fullinf_block, .todo_bottom_block {
+    margin-left: 5px;
+}
+
+.todo_fullinf_block {
+    display: block;
+}
+
+.todo_fullinf_block_hidden {
+    display: none;
+}
+
+.todo_content_block {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.todo_content_block input {
+    width: 30px;
+    height: 30px;
+}
+.todo_content_block input:hover, .todo_bottom_block input:hover{
+    cursor: pointer;
+}
+.todo_content {
+    font-weight: bold;
+}
+.todo_content_done {
+    color:rgb(0, 27, 182);
+}
+.todo_content_todo {
+    color:crimson;
+}
+
+.todo_content:before  {
+    content: 'Tâche: ';
+}
+
+.todo_tags:before {
+    content: 'Tags: ';
+}
+
+.todo_date:before {
+    content: 'Date: ';
+}
+
+.todo_state:before {
+    content: 'Etat: ';
+}
+
+.todo_bottom_block {
+    display: flex;
+    gap: 10px;
+}

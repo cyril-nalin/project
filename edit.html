@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editer une t&aacute;che</title>
+    <link rel="stylesheet" href="styles/edit.css"/>
+    <script type="text/javascript" src="scripts/queries.js"></script>
+</head>
+<body>
+    <header>
+        <div id="site_logo">
+            <img src="images/logo.png" alt="Logo du site" />
+        </div>
+        <nav id="links">
+            <a href="index.html">Acceuil</a>
+            <a href="tasks.html">Retour aux t&acirc;ches</a>
+            <a href="stats.html">Progression</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1 id="main_title">Edition d'une t&acirc;ches</h1>
+        <div id="content">
+            <div id="edit_block">
+                <form id="edit_task_form" action="#">
+                    <input type="hidden" id="edit_task_id" value="-1" />
+                    
+                    <label for="edit_title_task">Titre</label>
+                    <input id="edit_title_task" type="text" value="" requiered/>
+
+                    <label for="edit_tags_task">Tags (séparés par des ';')</label>
+                    <input id="edit_tags_task" type="text" value="" requiered/>
+                    
+                    <label for="edit_state_task">Etat</label>
+                    <select id="edit_state_task">
+                        <option value="0">A faire</option>
+                        <option value="1">Termin&eacute;e</option>
+                    </select>
+
+                    <button type="submit" id="edit_task_submit">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Cyril — Gestion de t&acirc;ches</p>
+    </footer>
+    <script type="text/javascript" src="scripts/edit.js"></script>
+</body>
+</html>

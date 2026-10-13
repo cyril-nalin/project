@@ -1,0 +1,22 @@
+@import 'style.css';
+
+#edit_block {
+    margin-left: 10px;
+}
+
+#edit_task_form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#edit_title_task, #edit_tags_task {
+    max-width: 600px;
+}
+
+#edit_task_submit {
+    width:120px;
+}
+#edit_task_submit:hover {
+    cursor:pointer;
+}

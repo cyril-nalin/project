@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User infos</title>
+    <link rel="stylesheet" href="styles/index.css"/>
+</head>
+<body>
+    <header>
+        <div id="site_logo">
+            <img src="images/logo.png" alt="Logo du site" />
+        </div>
+        <nav id="links">
+            <a href="index.html">Acceuil</a>
+        </nav>
+    </header>
+
+    <main>
+        <h1 id="main_title">Saisie des informations</h1>
+        <div id="content">
+            <form id="user_inf">
+                <div id="user_inf_content">
+                    <div id="user_inf_name_block">
+                        <label for="user_name">Nom</label>
+                        <input type="text" id="user_name" />
+                    </div>
+
+                    <p id="user_inf_err"></p>
+                    
+                    <div id="user_inf_btn_block">
+                        <button type="submit" id="user_inf_btn">Connexion</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Cyril — Gestion de t&acirc;ches</p>
+    </footer>
+    <script type="text/javascript" src="scripts/user_inf.js"></script>
+</body>
+</html>
