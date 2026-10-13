@@ -226,8 +226,7 @@ function displayTasksStats() {
 
     })
     .catch(e => {
-        console.error(e);
     });
 }
-setInterval(displayTasksStats, 500);
+setInterval(displayTasksStats, 2000);
 
