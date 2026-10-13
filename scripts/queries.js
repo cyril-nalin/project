@@ -1,5 +1,5 @@
 //const QUERY_HOSTNAME = 'http://127.0.0.1:3000';
-const QUERY_HOSTNAME = 'https://project-zeta-nine-71.vercel.app/:3000';
+const QUERY_HOSTNAME = 'https://api-theta-five-60.vercel.app';
 
 const user_name = localStorage.getItem('user_name');
 let etitle_h1, econtent, eedit_block;
