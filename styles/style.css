@@ -52,7 +52,6 @@ header img {
     cursor: pointer;
 }
 
-
 #content {
     /*background-color: olive;*/
     box-sizing: border-box;
@@ -88,6 +87,10 @@ form label {
     width:50%;
 }
 
+#err_box {
+    color: red;
+    margin: 10px;
+}
 
 @media(max-width: 800px) {
     header {

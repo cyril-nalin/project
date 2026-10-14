@@ -1,2 +1,2 @@
-api/tests/node_modules/
-.vercel/
+*.bat
+/.vscode

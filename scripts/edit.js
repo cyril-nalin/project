@@ -2,18 +2,18 @@
  * 
  * A placer après les éléments de la page
  */
-//const etitle_h1 = document.getElementById('main_title');
-econtent = document.getElementById('content');
-
-if(null === user_name) {
-    gotoIndex();
-}
-
 const params = new URLSearchParams(document.location.search);
-if(!params.has('id')) {//ne devrait pas arriver a moin qu'on ne change manuellement l'url
+const add_mode = params.has('add') ? ('true' === params.get('add')) : false;
+
+if(!add_mode && !params.has('id')) {
     gotoIndex();
 }
+
 const id = params.get('id');
+if(!add_mode && Number(id) <= 0) {
+    alert('Tâche introuvable, retour à la liste.');
+    document.location.assign('tasks.html');
+}
 
 setupLogoutButton();
 
@@ -22,20 +22,18 @@ const eedit_tags_task = document.getElementById('edit_tags_task');
 const eedit_state_task = document.getElementById('edit_state_task');
 
 function getTaskData() {
-    fetch(QUERY_HOSTNAME + '/todos/' + id)
+    doFetch('/todos/' + id)
     .then( function(response) {
         if(!response.ok) {
-            throw('Impossible de récuperer les données');
+            throw('Impossible de récuperer les données pour cette tâche.');
         }
         return response.json();
     } )
     .then(data => {
-        
         let s = '';
         eedit_title_task.value = data.text;
         //console.log(data.Tags);
         data.Tags.forEach(tag => {
-            
             if(0 === s.length) {
                 s = tag;
             }else {
@@ -50,38 +48,42 @@ function getTaskData() {
         }
     })
     .catch(e => {
-        console.error(e);
-        gotoIndex();
+        sendError(e);
     });
 }
 
-getTaskData();
+if( add_mode ) {
+    etitle_h1.textContent = 'Ajout d\'une tâche';
+    document.title = 'Ajout d\'une tâche';
+} else {
+    getTaskData();
+}
 
-document.getElementById('edit_task_form').addEventListener('submit', function(e){
-    e.preventDefault();
+let editErr;
+document.getElementById('edit_task_form').addEventListener('submit', async function(e){
     const txt = eedit_title_task.value;
-
+    e.preventDefault();
+      
     if(0 === txt.length) {
         alert('Le titre ne doit pas être vide!');
+        return;
     }
 
-    const tags = eedit_tags_task.value.split(';');
+    const tags = eedit_tags_task.value.split(';').map( (s) => s.trim()).filter( (s) => 0 !== s.length);
+
     if(0 === tags.length) {
         alert('Merci de renseigner au moin un Tag!');
+        return;
     }
 
     const bis_completed = (1 === eedit_state_task.selectedIndex) ? true : false;
+    let s = add_mode ? '/todos' : ('/todos/' + id);
+    editErr = false;
 
-    fetch(QUERY_HOSTNAME + '/todos/' + id, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            text: txt,
-            Tags: tags,
-            is_complete: bis_completed
-        })
+    await doFetch(s, (add_mode ? 'POST' : 'PUT'), {
+        text: txt,
+        Tags: tags,
+        is_complete: bis_completed
     })
     .then( function(response) {
         if(!response.ok) {
@@ -91,7 +93,13 @@ document.getElementById('edit_task_form').addEventListener('submit', function(e)
         return response.status;
     } )
     .catch(e => {
-        alert(e);
+        editErr = true;
     });
-    document.location.assign('tasks.html');
+
+    if(true === editErr) {
+        sendError('La requète n\'a pas aboutie, veuillez réessayer plus tard.');
+    } else {
+        document.location.assign('tasks.html');
+    }
+    
 });

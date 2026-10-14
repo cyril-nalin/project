@@ -1,32 +1,79 @@
-//const QUERY_HOSTNAME = 'http://127.0.0.1:3000';
-const QUERY_HOSTNAME = 'https://api-theta-five-60.vercel.app';
+const QUERY_HOSTNAME = 'http://127.0.0.1:3000';
+//const QUERY_HOSTNAME = 'https://totolist-iota.vercel.app';
+const STATS_REFRESH_INTERVAL = 500;
+
 
 const user_name = localStorage.getItem('user_name');
-let etitle_h1, econtent, eedit_block;
+const err_box = document.getElementById('err_box');
+const etitle_h1 = document.getElementById('main_title');
+const econtent = document.getElementById('subcontent');
+const eedit_block = document.getElementById('edit_block');
+
+let has_err = false;
+let myChart = null;
+let chartCtx = null;
+let callbackID = null;
 
 function gotoIndex() {
     window.document.location.assign('index.html');
 }
 
+if(null === user_name) {
+    gotoIndex();
+}
+
+function sendError(msg) {
+    if(null !== err_box) {
+        if(false === has_err) {
+            err_box.textContent = msg;
+            has_err = true;
+        }
+    }
+    console.error(msg);
+}
+
+function clearError(msg) {
+    has_err = false;
+    if(null !== err_box) {
+        err_box.textContent = '';
+    }
+}
+
 //Logout
 function setupLogoutButton() {
-    /*document.getElementById('logout').addEventListener('click', (e) => {
-        localStorage.removeItem('user_name');
-        gotoIndex();
-    });*/
+    const logout = document.getElementById('logout');
+    if(null !== logout) {
+        logout.addEventListener('click', (e) => {
+            localStorage.removeItem('user_name');
+            gotoIndex();
+        });
+    }
+}
+
+
+function doFetch(path, meth = 'GET', data = null) {
+    //clearError();
+    return (null !== data) ?
+        fetch(QUERY_HOSTNAME + path, {
+            method: meth,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }) :
+        fetch(QUERY_HOSTNAME + path, {
+            method: meth,
+            headers: {'Access-Control-Allow-Origin': '*'}
+        });
 }
 
 //Tasks
-function displayTasks(econtent) {
+function displayTasks() {
     let ntasks = 0;
     let ntasks_done = 0;
-    //alert( document.getElementById('progress_back').clientWidth * (ntasks_done / ntasks) + "/" + document.getElementById('progress_back').clientWidth);
-    fetch(QUERY_HOSTNAME + '/todos', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+
+    doFetch('/todos')
     .then( function(response) {
         if(!response.ok) {
             throw('Impossible de récuperer les données');
@@ -49,6 +96,7 @@ function displayTasks(econtent) {
             const etodo_tags = document.createElement('p');
             const etodo_date = document.createElement('p');
             const etodo_state = document.createElement('p');
+            const ehidden_id = document.createElement('input');
             let s = '';
             let dte;
             if(todo.is_complete)ntasks_done++;
@@ -57,8 +105,9 @@ function displayTasks(econtent) {
             ebtn_complete.setAttribute('type', 'button');
             ebtn_handle.setAttribute('type', 'button');
             ebtn_del.setAttribute('type', 'button');
+            ehidden_id.setAttribute('type', 'hidden');
 
-            //Texts
+            //Texts/values
             ebtn.value = '+';
             ebtn_handle.value = "Modifier";
             ebtn_complete.value = 'Changer état';
@@ -72,6 +121,7 @@ function displayTasks(econtent) {
                 else s += ';' + tag;
             });
             etodo_tags.textContent = s;
+            ehidden_id.value = todo.id;
 
             //Classes
             etodo_content_block.classList.add('todo_content_block');
@@ -79,7 +129,7 @@ function displayTasks(econtent) {
             etodo_fullinf_block.classList.add('todo_fullinf_block_hidden');
             ebtn.classList.add('todo_btn');
             etodo_content.classList.add('todo_content');
-            etodo_content.classList.add((todo.is_complete) ? 'todo_content_done' : 'todo_content_todo');
+            etodo_content.classList.add(todo.is_complete ? 'todo_content_done' : 'todo_content_todo');
   
             etodo_tags.classList.add('todo_tags');
             etodo_date.classList.add('todo_date');
@@ -93,6 +143,7 @@ function displayTasks(econtent) {
             etodo_fullinf_block.appendChild(etodo_tags);
             etodo_fullinf_block.appendChild(etodo_date);
             etodo_fullinf_block.appendChild(etodo_state);
+            etodo_fullinf_block.appendChild(ehidden_id);
             
             etodo_bottom_block.appendChild(ebtn_handle);
             etodo_bottom_block.appendChild(ebtn_complete);
@@ -125,15 +176,7 @@ function displayTasks(econtent) {
             });
             ebtn_complete.addEventListener('click', async function() {
                 todo.is_complete = !todo.is_complete;
-                await fetch(QUERY_HOSTNAME + '/todos/' + todo.id, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        is_complete: todo.is_complete
-                    })
-                })
+                await doFetch('/todos/' + todo.id, 'PUT', {is_complete: todo.is_complete})
                 .then( function(response) {
                     if(!response.ok) {
                         throw('Impossible de récuperer les données');
@@ -141,7 +184,7 @@ function displayTasks(econtent) {
                     return response.status;
                 } )
                 .catch(e => {
-                    alert(e);
+                    sendError(e);
                 });
                 /*if(todo.is_complete) {
                     ntasks_done++;
@@ -158,10 +201,8 @@ function displayTasks(econtent) {
             });
 
             ebtn_del.addEventListener('click', async function() {
-                if(confirm('Confirmez vous supprimer la tâche?')) {
-                    await fetch(QUERY_HOSTNAME + '/todos/' + todo.id, {
-                        method: 'DELETE',
-                    })
+                if(confirm('Confirmez vous supprimer la tâche' + (todo.is_complete ? '?' : ' (attention, non terminée)') )) {
+                    await doFetch('/todos/' + todo.id, 'DELETE')
                     .then( function(response) {
                         if(!response.ok) {
                             throw('Impossible de supprimer les données');
@@ -169,14 +210,13 @@ function displayTasks(econtent) {
                         return response.status;
                     })
                     .catch(e => {
-                        console.error(e);
+                        sendError(e);
                     });
                     //etodo_block.style.display = 'none';
                     displayTasks(econtent);
                 }
             });
         });
-        //document.getElementById('cur_progress').style.width = String(document.getElementById('progress_back').clientWidth * (ntasks_done / ntasks)) + 'px';
         document.getElementById('cur_progress').style.width = ((ntasks_done * 100.0) / ntasks) + '%';
         document.getElementById('progress_text').textContent = 'Taches terminée(s): ' + ntasks_done + '/' + ntasks;
     })
@@ -185,17 +225,8 @@ function displayTasks(econtent) {
     });
 }
 
-let myChart;
-let chartCtx;
-
 function displayTasksStats() {
-    //alert( document.getElementById('progress_back').clientWidth * (ntasks_done / ntasks) + "/" + document.getElementById('progress_back').clientWidth);
-    fetch(QUERY_HOSTNAME + '/todos', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+    doFetch('/todos')
     .then( function(response) {
         if(!response.ok) {
             throw('Impossible de récuperer les données');
@@ -204,29 +235,24 @@ function displayTasksStats() {
     } )
     .then(data => {
         const ntasks = data[0].todolist.length;
-        //console.log( data[0].todolist.filter((todo) => (true === todo.is_complete)) );
         const ntasks_done = data[0].todolist.filter((todo) => (true === todo.is_complete)).length;
 
         data[0].todolist.forEach(todo => {
-            //document.getElementById('cur_progress').style.width = String(document.getElementById('progress_back').clientWidth * (ntasks_done / ntasks)) + 'px';
             document.getElementById('cur_progress').style.width = ((ntasks_done * 100.0) / ntasks) + '%';
             document.getElementById('progress_text').textContent = 'Taches terminée(s): ' + ntasks_done + '/' + ntasks;
         });
-
         
         if(null !== chartCtx) {//script utilisé sur tasks et sur stats mais seul stats a le chart
-            //console.log( myChart.data.datasets[0].data);
             let ntodo = ntasks - ntasks_done;
             if(myChart.data.datasets[0].data[0] !== ntodo || myChart.data.datasets[0].data[0] !== ntasks_done) {
                 myChart.data.datasets[0].data = [ntodo, ntasks_done];
                 myChart.update();
             }
         }
-
-
     })
     .catch(e => {
+        if(null !== callbackID) clearInterval(callbackID);
+        sendError('Impossible de récuperer les données, veuillez rafraichir la page ou revenir plus tard.');
     });
 }
-setInterval(displayTasksStats, 2000);
 

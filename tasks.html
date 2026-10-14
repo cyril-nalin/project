@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des t&aacute;ches</title>
     <link rel="stylesheet" href="styles/tasks.css"/>
-    <script type="text/javascript" src="scripts/queries.js"></script>
+    <link rel="icon" href="images/favicon.png"/>
 </head>
 <body>
     <header>
@@ -15,6 +15,7 @@
         <nav id="links">
             <a href="index.html">Acceuil</a>
             <a href="stats.html">Progression</a>
+            <a href="edit.html?add=true">Poster</a>
         </nav>
     </header>
 
@@ -29,12 +30,14 @@
                 <p id="progress_text"></p>
             </div>
             <div id="subcontent">&nbsp</div>
+            <div id="err_box"></div>
         </div>
     </main>
 
     <footer>
         <p>&copy; 2026 Cyril — Gestion de t&acirc;ches</p>
     </footer>
+    <script type="text/javascript" src="scripts/queries.js"></script>
     <script type="text/javascript" src="scripts/tasks.js"></script>
 </body>
 </html>

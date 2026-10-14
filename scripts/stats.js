@@ -2,16 +2,7 @@
  * 
  * A placer après les éléments de la page
  */
-etitle_h1 = document.getElementById('main_title');
-econtent = document.getElementById('subcontent');
 
-eedit_block = document.getElementById('edit_block');
-
-
-
-if(null === user_name) {
-    window.document.location.assign('index.html');
-}
 
 //eedit_block.style.display = 'none';
 etitle_h1.textContent = 'Progression des tâches, bienvenue ' + user_name;
@@ -46,6 +37,8 @@ myChart = new Chart(chartCtx, {
     }
 });
 
-
 displayTasksStats();
+if(false === has_err) {
+    callbackID = setInterval(displayTasksStats, STATS_REFRESH_INTERVAL)
+}
 
