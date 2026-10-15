@@ -6,7 +6,6 @@
 
 //eedit_block.style.display = 'none';
 etitle_h1.textContent = 'Progression des tâches, bienvenue ' + user_name;
-setupLogoutButton();
 
 chartCtx = document.getElementById('myChart');
 myChart = new Chart(chartCtx, {

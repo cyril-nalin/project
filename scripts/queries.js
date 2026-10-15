@@ -39,18 +39,6 @@ function clearError(msg) {
     }
 }
 
-//Logout
-function setupLogoutButton() {
-    const logout = document.getElementById('logout');
-    if(null !== logout) {
-        logout.addEventListener('click', (e) => {
-            localStorage.removeItem('user_name');
-            gotoIndex();
-        });
-    }
-}
-
-
 function doFetch(path, meth = 'GET', data = null) {
     //clearError();
     return (null !== data) ?

@@ -4,25 +4,29 @@
  */
 const params = new URLSearchParams(document.location.search);
 const add_mode = params.has('add') ? ('true' === params.get('add')) : false;
+let id;
 
-if(!add_mode && !params.has('id')) {
-    gotoIndex();
+if(!add_mode) {
+    if(!params.has('id')) {
+        gotoIndex();
+    }
+    id = params.get('id');
+    if(Number(id) <= 0) {
+        alert('Tâche introuvable, retour à la liste.');
+        document.location.assign('tasks.html');
+    }
 }
-
-const id = params.get('id');
-if(!add_mode && Number(id) <= 0) {
-    alert('Tâche introuvable, retour à la liste.');
-    document.location.assign('tasks.html');
-}
-
-setupLogoutButton();
 
 const eedit_title_task = document.getElementById('edit_title_task');
 const eedit_tags_task = document.getElementById('edit_tags_task');
 const eedit_state_task = document.getElementById('edit_state_task');
 
-function getTaskData() {
-    doFetch('/todos/' + id)
+eedit_state_task.addEventListener('change', () => {
+    console.log('@:' + eedit_state_task.selectedIndex);
+})
+
+async function getTaskData() {
+    await doFetch('/todos/' + id)
     .then( function(response) {
         if(!response.ok) {
             throw('Impossible de récuperer les données pour cette tâche.');
@@ -32,7 +36,6 @@ function getTaskData() {
     .then(data => {
         let s = '';
         eedit_title_task.value = data.text;
-        //console.log(data.Tags);
         data.Tags.forEach(tag => {
             if(0 === s.length) {
                 s = tag;
@@ -43,9 +46,27 @@ function getTaskData() {
         eedit_tags_task.value = s;
         if(data.is_complete) {
             eedit_state_task.selectedIndex = 1;
+            //eedit_state_task.dispatchEvent(new Event('change'));
         } else {
             eedit_state_task.selectedIndex = 0;
         }
+        document.getElementById('edit_task_del_btn_block').style.display = 'block';
+        document.getElementById('edit_task_del_btn').addEventListener('click', async function() {
+            if(confirm('Confirmez vous supprimer la tâche' + (!data.is_complete ? '?' : ' (attention, non terminée)') )) {
+                await doFetch('/todos/' + id, 'DELETE')
+                .then( function(response) {
+                    if(!response.ok) {
+                        throw('Impossible de supprimer les données');
+                    }
+                    return response.status;
+                })
+                .catch(e => {
+                    sendError(e);
+                });
+                document.location.assign('tasks.html');
+            }
+        });
+
     })
     .catch(e => {
         sendError(e);
@@ -55,11 +76,13 @@ function getTaskData() {
 if( add_mode ) {
     etitle_h1.textContent = 'Ajout d\'une tâche';
     document.title = 'Ajout d\'une tâche';
+    document.getElementById('edit_task_del_btn_block').style.display = 'none';
 } else {
     getTaskData();
 }
 
 let editErr;
+
 document.getElementById('edit_task_form').addEventListener('submit', async function(e){
     const txt = eedit_title_task.value;
     e.preventDefault();
@@ -101,5 +124,4 @@ document.getElementById('edit_task_form').addEventListener('submit', async funct
     } else {
         document.location.assign('tasks.html');
     }
-    
 });

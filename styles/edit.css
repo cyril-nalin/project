@@ -14,9 +14,16 @@
     max-width: 600px;
 }
 
-#edit_task_submit {
-    width:120px;
+#edit_form_btns {
+    display: flex;
+    gap: 20px;
 }
-#edit_task_submit:hover {
+
+#edit_task_submit, #edit_task_del_btn{
+    width:120px;
+    height: 30px;
+    font-size: 18px;
+}
+#edit_task_submit:hover, #edit_task_del_btn:hover{
     cursor:pointer;
 }

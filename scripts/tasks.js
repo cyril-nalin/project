@@ -6,7 +6,7 @@
 
 //eedit_block.style.display = 'none';
 etitle_h1.textContent = 'Gestion des tâches, bienvenue ' + user_name;
-setupLogoutButton();
+
 displayTasks();
 
 if(false === has_err) {
