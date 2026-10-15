@@ -1,6 +1,6 @@
 //const QUERY_HOSTNAME = 'http://127.0.0.1:3000';
 const QUERY_HOSTNAME = 'https://totolist-iota.vercel.app';
-const STATS_REFRESH_INTERVAL = 500;
+const STATS_REFRESH_INTERVAL = 2000;
 
 
 const user_name = localStorage.getItem('user_name');
