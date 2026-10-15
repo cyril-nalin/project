@@ -57,11 +57,11 @@ function doFetch(path, meth = 'GET', data = null) {
 }
 
 //Tasks
-function displayTasks() {
+async function displayTasks() {
     let ntasks = 0;
     let ntasks_done = 0;
 
-    doFetch('/todos')
+    await doFetch('/todos')
     .then( function(response) {
         if(!response.ok) {
             throw('Impossible de récuperer les données');
