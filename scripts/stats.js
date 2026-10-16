@@ -38,6 +38,6 @@ myChart = new Chart(chartCtx, {
 
 displayTasksStats();
 if(false === has_err) {
-    callbackID = setInterval(displayTasksStats, STATS_REFRESH_INTERVAL)
+    //callbackID = setInterval(displayTasksStats, STATS_REFRESH_INTERVAL)
 }
 

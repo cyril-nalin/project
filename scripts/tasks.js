@@ -10,5 +10,5 @@ etitle_h1.textContent = 'Gestion des tâches, bienvenue ' + user_name;
 displayTasks();
 
 if(false === has_err) {
-    callbackID = setInterval(displayTasksStats, STATS_REFRESH_INTERVAL);
+    //callbackID = setInterval(displayTasksStats, STATS_REFRESH_INTERVAL);
 }
