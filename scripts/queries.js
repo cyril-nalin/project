@@ -41,6 +41,7 @@ function clearError(msg) {
 
 function doFetch(path, meth = 'GET', data = null) {
     //clearError();
+    //console.log(QUERY_HOSTNAME + path);
     return (null !== data) ?
         fetch(QUERY_HOSTNAME + path, {
             method: meth,
@@ -57,11 +58,11 @@ function doFetch(path, meth = 'GET', data = null) {
 }
 
 //Tasks
-async function displayTasks() {
+function displayTasks() {
     let ntasks = 0;
     let ntasks_done = 0;
 
-    await doFetch('/todos')
+    doFetch('/todos')
     .then( function(response) {
         if(!response.ok) {
             throw('Impossible de récuperer les données');
@@ -164,16 +165,12 @@ async function displayTasks() {
             });
             ebtn_complete.addEventListener('click', async function() {
                 todo.is_complete = !todo.is_complete;
-                await doFetch('/todos/' + todo.id, 'PUT', {is_complete: todo.is_complete})
-                .then( function(response) {
-                    if(!response.ok) {
-                        throw('Impossible de récuperer les données');
-                    }
-                    return response.status;
-                } )
-                .catch(e => {
-                    sendError(e);
-                });
+                try {
+                    await doFetch('/todos/' + todo.id, 'PUT', {is_complete: todo.is_complete});
+                }
+                catch(e) {
+                    sendError('Impossible de récuperer les données');
+                };
                 /*if(todo.is_complete) {
                     ntasks_done++;
                     etodo_content.classList.remove('todo_content_todo');
@@ -185,23 +182,19 @@ async function displayTasks() {
                     etodo_content.classList.add('todo_content_todo');
                     etodo_state.textContent  = 'A faire';
                 }*/
-                displayTasks(econtent);
+                displayTasks();
             });
 
             ebtn_del.addEventListener('click', async function() {
                 if(confirm('Confirmez vous supprimer la tâche' + (todo.is_complete ? '?' : ' (attention, non terminée)') )) {
-                    await doFetch('/todos/' + todo.id, 'DELETE')
-                    .then( function(response) {
-                        if(!response.ok) {
-                            throw('Impossible de supprimer les données');
-                        }
-                        return response.status;
-                    })
-                    .catch(e => {
-                        sendError(e);
-                    });
+                    try {
+                        await doFetch('/todos/' + todo.id, 'DELETE')
+                    }
+                    catch(e) {
+                        sendError('Impossible de supprimer les données');
+                    };
                     //etodo_block.style.display = 'none';
-                    displayTasks(econtent);
+                    displayTasks();
                 }
             });
         });
@@ -215,12 +208,7 @@ async function displayTasks() {
 
 function displayTasksStats() {
     doFetch('/todos')
-    .then( function(response) {
-        if(!response.ok) {
-            throw('Impossible de récuperer les données');
-        }
-        return response.json();
-    } )
+    .then( response => response.json() )
     .then(data => {
         const ntasks = data[0].todolist.length;
         const ntasks_done = data[0].todolist.filter((todo) => (true === todo.is_complete)).length;

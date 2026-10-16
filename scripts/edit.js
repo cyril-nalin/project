@@ -26,15 +26,15 @@ eedit_state_task.addEventListener('change', () => {
 })
 
 async function getTaskData() {
-    await doFetch('/todos/' + id)
-    .then( function(response) {
-        if(!response.ok) {
-            throw('Impossible de récuperer les données pour cette tâche.');
+    try {
+        let resp = await doFetch('/todos/' + id);
+        if(!resp.ok) {
+            throw new Error(`Statut: ${resp.status}`);
         }
-        return response.json();
-    } )
-    .then(data => {
         let s = '';
+        let data = await resp.json();
+        console.log(data);
+
         eedit_title_task.value = data.text;
         data.Tags.forEach(tag => {
             if(0 === s.length) {
@@ -52,25 +52,21 @@ async function getTaskData() {
         }
         document.getElementById('edit_task_del_btn_block').style.display = 'block';
         document.getElementById('edit_task_del_btn').addEventListener('click', async function() {
-            if(confirm('Confirmez vous supprimer la tâche' + (!data.is_complete ? '?' : ' (attention, non terminée)') )) {
-                await doFetch('/todos/' + id, 'DELETE')
-                .then( function(response) {
-                    if(!response.ok) {
-                        throw('Impossible de supprimer les données');
-                    }
-                    return response.status;
-                })
-                .catch(e => {
-                    sendError(e);
-                });
+            if(confirm('Confirmez vous supprimer la tâche' + (data.is_complete ? '?' : ' (attention, non terminée)') )) {
+                try {
+                    await doFetch('/todos/' + id, 'DELETE');
+                }
+                catch(e) {
+                    sendError('Impossible de supprimer les données');
+                }
                 document.location.assign('tasks.html');
             }
         });
 
-    })
-    .catch(e => {
-        sendError(e);
-    });
+    }
+    catch(e) {
+        sendError('Impossible de récuperer les données pour cette tâche.');
+    };
 }
 
 if( add_mode ) {
@@ -103,23 +99,13 @@ document.getElementById('edit_task_form').addEventListener('submit', async funct
     let s = add_mode ? '/todos' : ('/todos/' + id);
     editErr = false;
 
-    await doFetch(s, (add_mode ? 'POST' : 'PUT'), {
+    let response = await doFetch(s, (add_mode ? 'POST' : 'PUT'), {
         text: txt,
         Tags: tags,
         is_complete: bis_completed
-    })
-    .then( function(response) {
-        if(!response.ok) {
-            throw('Impossible de récuperer les données');
-        }
-        getTaskData();
-        return response.status;
-    } )
-    .catch(e => {
-        editErr = true;
     });
 
-    if(true === editErr) {
+    if(true !== response.ok) {
         sendError('La requète n\'a pas aboutie, veuillez réessayer plus tard.');
     } else {
         document.location.assign('tasks.html');
